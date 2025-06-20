@@ -2,51 +2,86 @@
 
 A powerful document-based chatbot built using **Hybrid Retrieval-Augmented Generation (RAG)** combining **semantic similarity search (ChromaDB + Ollama Embeddings)** with **keyword matching**, and powered by **Groq’s LLaMA 3** for generating accurate, grounded answers.
 
+---
+
 ## 🚀 Features
 
 - 📄 **Supports multi-format knowledge ingestion**: `.txt`, `.pdf`, `.csv`, `.docx`, `.json`
 - 🔍 **Hybrid search strategy**: Combines semantic + keyword-based document retrieval
 - 🧠 **Groq LLM integration**: Fast, accurate answers using `llama3-8b-8192`
+- 🧱 **ChromaDB + Ollama Embeddings**: Local vector database for fast retrieval
+- 🐳 **Dockerized for production**: Run anywhere with one command
 - 📚 **Built with Streamlit**: Simple, intuitive web interface
 
 ---
 
-## 🛠️ Setup Instructions
+## 🛠️ Setup Instructions (Without Docker)
 
-1. **Clone the repo**
-   ```bash
-   git clone https://github.com/your-username/Hybrid-RAG-Assistant.git
-   cd Hybrid-RAG-Assistant
-   ```
+### 1. Clone the repo
 
-2. **Create a virtual environment and activate it**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+```bash
+git clone https://github.com/your-username/Hybrid-RAG-Assistant.git
+cd Hybrid-RAG-Assistant
+```
 
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 2. Create a virtual environment and activate it
 
-4. **Set up your environment variables**
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
 
-   Create a `.env` file in the root directory with your [Groq API key](https://console.groq.com/keys):
+### 3. Install dependencies
 
-   ```
-   GROQ_API_KEY=your_groq_api_key_here
-   ```
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Set up your environment variables
+
+Create a `.env` file in the root directory:
+
+```env
+GROQ_API_KEY=your_groq_api_key_here
+```
 
 ---
 
-## 🧪 Run the App
+## 🧪 Run the App Locally
 
 ```bash
 streamlit run main.py
 ```
 
-Then open [http://localhost:8501](http://localhost:8501) in your browser.
+Visit [http://localhost:8501](http://localhost:8501) in your browser.
+
+---
+
+## 🐳 Docker Setup (Recommended)
+
+### 1. Build Docker image
+
+```bash
+docker build -t hybrid-rag-app .
+```
+
+### 2. Run the container
+
+```bash
+docker run -p 8501:8501 -e GROQ_API_KEY=your_groq_api_key_here hybrid-rag-app
+```
+
+> ⚠️ Ensure Ollama is running on the host system and `nomic-embed-text` model is available.
+> You can start it with:
+```bash
+ollama run nomic-embed-text
+```
+
+If you’re on Linux, you can run the container with host networking:
+
+```bash
+docker run --network=host -e GROQ_API_KEY=your_groq_api_key_here hybrid-rag-app
+```
 
 ---
 
@@ -55,11 +90,12 @@ Then open [http://localhost:8501](http://localhost:8501) in your browser.
 ```bash
 Hybrid-RAG-Assistant/
 ├── main.py                      # Main Streamlit app
+├── Dockerfile                   # Dockerfile to containerize the app
+├── .env                         # Env variables (GROQ API)
+├── requirements.txt             # Python dependencies
 ├── utils/
-│   ├── loader.py              # Reads files (.txt, .pdf, .docx, etc.)
-│   └── chunker.py             # Chunks the documents into smaller pieces
-├── .env                       # Environment file for secrets
-├── requirements.txt           # Python dependencies
+│   ├── loader.py                # File loader utilities
+│   └── chunker.py               # Document chunking logic
 └── README.md
 ```
 
@@ -68,31 +104,33 @@ Hybrid-RAG-Assistant/
 ## 💡 How It Works
 
 1. **Upload Files** → `.txt`, `.pdf`, `.docx`, `.csv`, `.json`
-2. **Indexing** → Files are chunked and embedded using `nomic-embed-text`
+2. **Indexing** → Files are chunked and embedded using Ollama's `nomic-embed-text`
 3. **Hybrid Retrieval** → 
-   - Dense vector similarity search (via ChromaDB)
+   - Dense vector similarity via ChromaDB
    - Keyword overlap scoring
-4. **Answer Generation** → Groq's LLaMA3 answers based strictly on retrieved context
+4. **Answer Generation** → Groq's `llama3-8b-8192` model answers based strictly on the top retrieved content
 
 ---
 
-## 📌 Notes
+## 🧠 Requirements
 
-- Make sure Groq API is accessible from your location.
-- Supports up to 10 documents combined via hybrid scoring.
-- Customize retrieval count or models in `main.py`.
+- Python 3.10+
+- [Groq API Key](https://console.groq.com/keys)
+- [Ollama](https://ollama.com/) running with `nomic-embed-text` model pulled
+- Docker (for containerized deployment)
 
 ---
 
-## 📃 License
+## 📝 License
 
-MIT License. Free to use with attribution.
+MIT License — free to use, modify and share with attribution.
 
 ---
 
 ## 🙏 Acknowledgements
 
-- [Groq LLM](https://groq.com/)
+- [Groq](https://groq.com/)
+- [Ollama](https://ollama.com/)
 - [LangChain](https://www.langchain.com/)
 - [ChromaDB](https://www.trychroma.com/)
 - [Streamlit](https://streamlit.io/)
